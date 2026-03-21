@@ -1,37 +1,72 @@
-{{ config(
-    materialized = 'view'
-) }}
+-- PURPOSE: Clean and standardize raw Yahoo Finance data.
+-- FUTURES-SPECIFIC HANDLING:
+--   a) Asset type: tagged as 'equity' or 'futures' for downstream separation
+--   b) Contract rolls: price jumps >3% day-over-day on futures are flagged
+--      (not dropped) so downstream models can handle them explicitly
 
-with source_data as (
+with source as (
 
-    select *
-    from {{ source('raw_yahoo', 'raw_yahoo_prices') }}
+    select * from {{ source('raw_yahoo', 'raw_yahoo_prices') }}
 
 ),
 
-renamed as (
+cleaned as (
 
     select
-        cast(symbol as string) as symbol,
-        cast(trading_date as date) as trading_date,
+          symbol
+        , case
+            when symbol like '%=F' then 'futures'
+            else 'equity'
+          end                                             as asset_type
+        , cast(trading_date as date)                      as trading_date
+        , cast(open as numeric)                           as open_price
+        , cast(high as numeric)                           as high_price
+        , cast(low as numeric)                            as low_price
+        , cast(close as numeric)                          as close_price
+        , cast(adj_close as numeric)                      as adj_close_price
+        , cast(volume as int64)                           as volume
+        , source                                          as data_source
+        , cast(ingestion_timestamp as timestamp)          as ingested_at
 
-        cast(open as float64) as open_price,
-        cast(high as float64) as high_price,
-        cast(low as float64) as low_price,
-        cast(close as float64) as close_price,
-        cast(adj_close as float64) as adjusted_close_price,
+    from source
+    where close is not null
+      and trading_date is not null
 
-        cast(volume as int64) as volume,
+),
 
-        cast(currency as string) as currency,
-        cast(exchange as string) as exchange,
-        cast(source as string) as data_source,
+deduplicated as (
+    -- if the same symbol/date was ingested more than once, keep the latest
+    select *
+    from cleaned
+    qualify row_number() over (
+        partition by symbol, trading_date
+        order by ingested_at desc
+    ) = 1
+),
 
-        cast(ingestion_timestamp as timestamp) as ingestion_timestamp
+with_contract_roll_flag as (
 
-    from source_data
+    -- Flag futures rows where the day-over-day price change exceeds 3%.
+    -- These are likely contract roll events, not real market moves.
+    -- Flagged rows are excluded from return calculations in int_daily_returns.
+    select
+          *
+        , case
+            when asset_type = 'futures'
+                and abs(
+                    close_price - lag(close_price) over (
+                        partition by symbol order by trading_date
+                    )
+                ) / nullif(
+                    lag(close_price) over (
+                        partition by symbol order by trading_date
+                    ), 0
+                ) > 0.03
+            then true
+            else false
+          end                                             as is_contract_roll
+    from deduplicated
 
 )
 
-select *
-from renamed
+select * from with_contract_roll_flag
