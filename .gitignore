@@ -1,18 +1,40 @@
-# Python
+# ---- SECRETS & ENVIRONMENT ----
+.env
+.env.*
+!.env.example        # keep the example template, never the real values
+
+# Google Cloud credentials — NEVER commit these
+*.json
+service_account*.json
+gcp_credentials*.json
+application_default_credentials.json
+
+# ---- dbt ----
+target/              # compiled SQL and run artifacts
+dbt_modules/         # legacy package path
+dbt_packages/        # current package path
+logs/
+.user.yml            # dbt user-specific config
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+env/
 venv/
 .venv/
-__pycache__/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
 
-# dbt
-target/
-dbt_packages/
-logs/
-
-# OS
+# ---- OS ----
 .DS_Store
+Thumbs.db
 
-# Secrets
-*.json
-.env
-
-
+# ---- IDE ----
+.vscode/
+.idea/
+*.swp
+*.swo
