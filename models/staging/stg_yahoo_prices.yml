@@ -1,0 +1,40 @@
+version: 2
+
+models:
+  - name: stg_yahoo_prices
+    description: >
+      Cleaned and standardized Yahoo Finance daily price data.
+      Covers S&P 500 majors (equities) and commodity futures (GC=F, SI=F, CL=F, UX=F, NG=F).
+      Contract roll events are flagged but not removed.
+
+    columns:
+      - name: symbol
+        description: "Ticker symbol. Equities: AAPL etc. Futures: GC=F etc."
+        tests:
+          - not_null
+
+      - name: asset_type
+        description: "Either 'equity' or 'futures'"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['equity', 'futures']
+
+      - name: trading_date
+        description: "Date of the trading session"
+        tests:
+          - not_null
+
+      - name: close_price
+        description: "Closing price. Should always be positive."
+        tests:
+          - not_null
+
+      - name: is_contract_roll
+        description: >
+          True if this row is likely a futures contract roll event
+          (price change >3% day-over-day for futures tickers).
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
