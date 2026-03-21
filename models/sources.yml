@@ -2,38 +2,30 @@ version: 2
 
 sources:
   - name: raw_yahoo
-    database: dbt-demo-project-485817   # Your GCP project
-    schema: raw_yahoo                     # BigQuery dataset
+    database: "{{ env_var('GCP_PROJECT_ID') }}"
+    schema: "{{ env_var('BQ_DATASET_ID', 'raw_yahoo') }}"
+    description: "Raw price data ingested from Yahoo Finance via yahoo_finance_ds.py"
+
+    freshness:
+      warn_after: {count: 3, period: day}
+      error_after: {count: 7, period: day}
+    loaded_at_field: ingestion_timestamp
 
     tables:
       - name: raw_yahoo_prices
-        description: "Raw daily stock prices ingested from Yahoo Finance"
-        
-        # Column that tracks when the row was ingested
-        loaded_at_field: ingestion_timestamp
-
-        # Freshness thresholds
-        freshness:
-          warn_after:
-            count: 2
-            period: day
-          error_after:
-            count: 7
-            period: day
-
-        # Basic column tests
+        description: "Daily OHLCV prices for S&P majors and commodity futures"
         columns:
           - name: symbol
-            description: "Stock ticker symbol"
+            description: "Ticker symbol (e.g. AAPL, GC=F)"
             tests:
               - not_null
-
           - name: trading_date
-            description: "Date of the trading session"
+            description: "The date of the trading session"
             tests:
               - not_null
-
           - name: close
-            description: "Closing price for the day"
-            tests:
-              - not_null
+            description: "Closing price for the session"
+          - name: volume
+            description: "Volume traded"
+          - name: ingestion_timestamp
+            description: "UTC timestamp when this row was written to BigQuery"

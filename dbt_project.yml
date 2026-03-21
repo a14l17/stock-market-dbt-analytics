@@ -1,5 +1,5 @@
 
-name: 'dbt_demo_project'              # Your project name
+name: 'stock-market-dbt-analytics'              # Your project name
 version: '1.0'
 config-version: 2                   # Always use version 2 for new projects
 
