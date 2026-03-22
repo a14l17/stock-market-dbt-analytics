@@ -11,23 +11,18 @@
 --   This is intentionally naive. fct_basket_performance measures how wrong it is.
 
 with rolling_stats as (
-
     select * from {{ ref('int_rolling_stats') }}
-
 ),
 
 week_ends as (
-
     -- Last trading day of each ISO week (Mon-Sun) per symbol
     select
           symbol
         , asset_type
         , date_trunc(trading_date, week(monday))    as week_start
         , max(trading_date)                         as week_end_date
-
     from rolling_stats
     group by 1, 2, 3
-
 ),
 
 week_end_scores as (
