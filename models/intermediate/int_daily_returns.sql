@@ -1,4 +1,3 @@
--- PURPOSE: Calculate daily returns for every asset, every trading day.
 -- CONTRACT ROLL EXCLUSION:
 -- Futures roll dates are excluded here. A 3% jump because a contract
 -- expired is not a real return — including it would corrupt rolling stats.
