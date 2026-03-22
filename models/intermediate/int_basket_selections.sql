@@ -43,10 +43,10 @@ week_end_scores as (
             (0.25 * r.momentum_score)
             + (0.35 * r.volatility_score)
             + (0.40 * r.consistency_score),
-            6
+            7
           )                                         as composite_score
 
-        , round(r.momentum * 5, 6)                  as predicted_weekly_return
+        , round(r.momentum * 5, 7)                  as predicted_weekly_return
 
     from week_ends w
     inner join rolling_stats r
