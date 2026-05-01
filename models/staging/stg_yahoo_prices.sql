@@ -1,4 +1,3 @@
--- PURPOSE: Clean and standardize raw Yahoo Finance data.
 -- FUTURES-SPECIFIC HANDLING:
 --   a) Asset type: tagged as 'equity' or 'futures' for downstream separation
 --   b) Contract rolls: price jumps >3% day-over-day on futures are flagged
