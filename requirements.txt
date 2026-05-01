@@ -5,5 +5,5 @@ google-cloud-bigquery
 pyarrow
 python-dotenv
 pandas-gbq
-dbt-bigquery
+dbt-bigquery==1.8.0
 
