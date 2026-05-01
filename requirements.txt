@@ -4,3 +4,4 @@ yfinance
 google-cloud-bigquery
 pyarrow
 python-dotenv
+pandas-gbq
