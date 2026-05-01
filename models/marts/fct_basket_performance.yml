@@ -1,0 +1,59 @@
+version: 2
+
+models:
+  - name: fct_basket_performance
+    description: >
+      Weekly basket performance: predicted vs actual returns for selected assets.
+      Top 3 equities and top 2 commodity futures selected each week via composite score
+      (consistency 40%, volatility safety 35%, momentum 25%).
+      Predicted return is naive: momentum × 5 days.
+      Actual return is the sum of daily returns in the following week.
+
+    columns:
+      - name: selection_id
+        description: "Surrogate key: hash of symbol + week_start"
+        tests:
+          - unique
+          - not_null
+
+      - name: symbol
+        tests:
+          - not_null
+
+      - name: asset_type
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['equity', 'futures']
+
+      - name: basket_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['equity_basket', 'commodity_basket']
+
+      - name: composite_score
+        tests:
+          - not_null
+
+      - name: predicted_weekly_return
+        tests:
+          - not_null
+
+      - name: actual_weekly_return
+        tests:
+          - not_null
+
+      - name: prediction_error
+        tests:
+          - not_null
+
+      - name: direction_correct
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: abs_prediction_error
+        tests:
+          - not_null
