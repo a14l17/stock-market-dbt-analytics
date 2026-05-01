@@ -12,7 +12,8 @@ application_default_credentials.json
 # ---- dbt ----
 target/              # compiled SQL and run artifacts
 dbt_modules/         # legacy package path
-dbt_packages/        # current package path
+dbt_packages/
+package-lock.yml
 logs/
 .user.yml            # dbt user-specific config
 
