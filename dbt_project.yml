@@ -1,5 +1,5 @@
 
-name: 'stock-market-dbt-analytics'              # Your project name
+name: 'stock_market_dbt_analytics'              # Your project name
 version: '1.0'
 config-version: 2                   # Always use version 2 for new projects
 
