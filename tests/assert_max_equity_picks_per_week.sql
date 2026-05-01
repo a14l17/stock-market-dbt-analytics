@@ -1,0 +1,12 @@
+-- tests/assert_max_equity_picks_per_week.sql
+-- Assert no week has more than 3 equity picks.
+-- Returns failing rows — dbt expects 0 rows for a passing test.
+
+select
+      selection_week_start
+    , basket_name
+    , count(*) as pick_count
+from {{ ref('fct_basket_performance') }}
+where basket_name = 'equity_basket'
+group by 1, 2
+having count(*) > 3
