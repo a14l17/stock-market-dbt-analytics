@@ -1,22 +1,28 @@
 
-name: 'stock_market_dbt_analytics'              # Your project name
+name: 'stock_market_dbt_analytics'             
 version: '1.0'
-config-version: 2                   # Always use version 2 for new projects
+config-version: 2                  
 
-profile: 'profiles'           # Matches your ~/.dbt/profiles.yml profile
+profile: 'profiles'           
 
-target-path: "target"               # Where dbt will write compiled SQL
-clean-targets:                      # Folders to clean when you run `dbt clean`
+target-path: "target"               # where dbt will write compiled SQL
+clean-targets:                      # folders to clean when you run `dbt clean`
   - "target"
   - "dbt_modules"
 
-model-paths: ["models"]             # Where your models live
-analysis-paths: ["analyses"]        # Optional: for ad-hoc analysis SQL files
-test-paths: ["tests"]               # Optional: if you write custom tests
-macro-paths: ["macros"]             # Optional: for macros
+model-paths: ["models"]            
+analysis-paths: ["analyses"]        # optional: for ad-hoc analysis SQL files
+test-paths: ["tests"]               # optional: for custom tests
+macro-paths: ["macros"]             # optional: for macros
 
 models:
-  my_dbt_project:                    # Namespace for your project models
-    +materialized: table             # Default materialization (table, view, incremental)
-    example:                         # Optional subfolder settings
-      +materialized: view            # Override default materialization for models in models/example
+  stock_market_dbt_analytics:
+
+    staging:
+      +materialized: view
+
+    intermediate:
+      +materialized: view
+
+    marts:
+      +materialized: table
