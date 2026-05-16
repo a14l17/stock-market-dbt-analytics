@@ -53,7 +53,7 @@ models:
           - not_null
           - accepted_values:
               values: [true, false]
-
+              quote: false
       - name: abs_prediction_error
         tests:
           - not_null
