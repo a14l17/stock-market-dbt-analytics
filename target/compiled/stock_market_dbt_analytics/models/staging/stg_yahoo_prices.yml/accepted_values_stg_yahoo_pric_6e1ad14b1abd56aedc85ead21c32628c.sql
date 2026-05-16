@@ -1,14 +1,5 @@
 
     
-    select
-      count(*) as failures,
-      count(*) != 0 as should_warn,
-      count(*) != 0 as should_error
-    from (
-      
-    
-  
-    
     
 
 with all_values as (
@@ -25,12 +16,7 @@ with all_values as (
 select *
 from all_values
 where value_field not in (
-    'True','False'
+    True,False
 )
 
 
-
-  
-  
-      
-    ) dbt_internal_test

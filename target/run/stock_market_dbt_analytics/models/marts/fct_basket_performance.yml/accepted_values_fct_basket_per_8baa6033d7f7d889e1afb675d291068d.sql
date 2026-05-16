@@ -25,7 +25,7 @@ with all_values as (
 select *
 from all_values
 where value_field not in (
-    'True','False'
+    True,False
 )
 
 
